@@ -38,9 +38,13 @@ public class RedisPocApplication {
 	  @PostMapping(value = "/articles")
 	   public void postArticles(@RequestParam(required = true) String appender) {
 	    	
-    	   JedisShardInfo shardInfo = new JedisShardInfo("guru.redis.cache.windows.net", 6380, true);
-		    shardInfo.setPassword("LtpQfw1fLS39aXmQ09WOYFAAgW7zi6aRkrtgsb28ut0="); /* Use your access key. */
+    	   JedisShardInfo shardInfo = new JedisShardInfo("guru.redis.cache.windows.net", 6379, false);
+		    shardInfo.setPassword("zVgF5L0OJikHnUJVChwlvXzmES5UxG67h9RyiMwUkV4="); /* Use your access key. */
 		    Jedis jedis = new Jedis(shardInfo);
+
+		    System.out.println(shardInfo.getHost());
+
+		    System.out.println(shardInfo.getPassword());
       //  JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
 
        // Jedis jedis = jedisPool.getResource();
