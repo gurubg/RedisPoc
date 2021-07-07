@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +28,12 @@ public class RedisPocApplication {
 		SpringApplication.run(RedisPocApplication.class, args);
 	}
 
-	
+	@GetMapping(value = "/heartbeat")
+	public String heartbeat()
+	{
+		return "Active" + System.currentTimeMillis();
+	}
+	 
 	
 	  @PostMapping(value = "/articles")
 	   public void postArticles(@RequestParam(required = true) String appender) {
