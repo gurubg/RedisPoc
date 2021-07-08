@@ -3,7 +3,9 @@ package com.solum.poc;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -82,5 +84,105 @@ public class RedisPocApplication {
     	 jedis.close();
    	   // jedisPool.close();
     }
+ 
+	  public class TagStatus implements Runnable {
+
+  		String appender;
+  		String page;
+  		int index;
+  		int iNumSuccess = 0;
+  	   public TagStatus(String  appender,String page,int index) {
+  	       this.appender = appender;
+  	      // this.page = page;
+  	       this.index = index;
+  	   }
+
+  	   public void run() {
+  		   
+  		   JedisShardInfo shardInfo = new JedisShardInfo("guru.redis.cache.windows.net", 6379, true);
+  		    shardInfo.setPassword("zVgF5L0OJikHnUJVChwlvXzmES5UxG67h9RyiMwUkV4="); /* Use your access key. */
+  		    Jedis jedis = new Jedis(shardInfo);
+  		   // jedis.set("foo", "bar");
+  		    
+//          	log.info("Starting thread-" +appender + "-" + (index+1) + " Page-" + page);
+//          	JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
+//          	
+//          	JedisPool jedisPool1 = new JedisPool(uri)
+//
+//              Jedis jedis = jedisPool.getResource();
+              
+              Pipeline pipeline = jedis.pipelined();
+
+              Set<String> successKeys = new HashSet<>();
+              
+              for (int page = 1 ; page <= 3 ; page++)
+              {
+              for(long i= 1 + (index * 200000) ; i <= 200000 + (index * 200000) ; i++)
+              {
+
+              	String padded = String.format("%06d" , i);
+
+              	String key = appender.concat(padded );
+
+              	jedis.hset(key, page + "", "ACK");
+              	
+              	
+              	Map<String, String> map =  jedis.hgetAll(key);
+              	
+                 	boolean bSuccess = true;
+      	        	
+      		        if(map.values().contains("PRO"))
+      		        {
+      		        	bSuccess = false;
+      		        }
+      	        	if (bSuccess)
+      	        	{
+      	        		//Insert SUCCESS in DB 
+      	        		//Delete the hash from Redis
+      	        		//pipeline.del(key);
+      	        		successKeys.add(key);
+      	        		iNumSuccess++;
+      	        	}
+      	        	
+      	        	if(iNumSuccess % 1000 == 0)
+      	        	{
+      	        	   successKeys.forEach(s -> pipeline.del(s) );
+      	        	   successKeys.forEach(s ->System.out.println(s) );
+      	                pipeline.sync();
+      	                successKeys.clear();
+      	        	}
+              }
+            
+              }
+          	
+              jedis.close();
+      	//    jedisPool.close();
+      	    
+      	    log.info("Closing thread - " + appender + " -" +(index+1) +  "--" + iNumSuccess);
+  	   }
+  	}
+
+  
+  @GetMapping(value = "/pageSuccess")
+  public  void pageSuccess(@RequestParam(required = true) String appender,
+  						@RequestParam(required = true) String page) {
+  	
+  	
+  	Runnable r0 = new TagStatus(appender,page,0);
+  	new Thread(r0).start();
+  	
+  	Runnable r1 = new TagStatus(appender,page,1);
+  	new Thread(r1).start();
+  	
+  	Runnable r2 = new TagStatus(appender,page,2);
+  	new Thread(r2).start();
+  	
+  	Runnable r3 = new TagStatus(appender,page,3);
+  	new Thread(r3).start();
+  	
+  	Runnable r4 = new TagStatus(appender,page,4);
+  	new Thread(r4).start();
+  	
+ }
  
 }
