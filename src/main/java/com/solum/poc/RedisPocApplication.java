@@ -72,7 +72,7 @@ public class RedisPocApplication {
     	     map.put("3", "PRO");
     	  
     	     pipeline.hmset(key, map);
-    	     //pipeline.expire(key, 100*60);
+    	     pipeline.expire(key, 120*60);
     		
     		if (i % 1000 == 0)
     		{
@@ -104,7 +104,7 @@ public class RedisPocApplication {
   		    Jedis jedis = new Jedis(shardInfo);
   		   // jedis.set("foo", "bar");
   		    
-//          	log.info("Starting thread-" +appender + "-" + (index+1) + " Page-" + page);
+          	log.info("Starting thread-" +appender + "-" );
 //          	JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
 //          	
 //          	JedisPool jedisPool1 = new JedisPool(uri)
@@ -117,7 +117,7 @@ public class RedisPocApplication {
               
               for (int page = 1 ; page <= 3 ; page++)
               {
-              for(long i= 1 + (index * 200000) ; i <= 200000 + (index * 200000) ; i++)
+              for(long i= 1; i <= 1000000  ; i++)
               {
 
               	String padded = String.format("%06d" , i);
@@ -147,9 +147,10 @@ public class RedisPocApplication {
       	        	if(iNumSuccess % 1000 == 0)
       	        	{
       	        	   successKeys.forEach(s -> pipeline.del(s) );
-      	        	   successKeys.forEach(s ->System.out.println(s) );
+      	        	  // successKeys.forEach(s ->System.out.println(s) );
       	                pipeline.sync();
       	                successKeys.clear();
+      	          //    System.out.println(successKeys.size());
       	        	}
               }
             
@@ -171,17 +172,17 @@ public class RedisPocApplication {
   	Runnable r0 = new TagStatus(appender,page,0);
   	new Thread(r0).start();
   	
-  	Runnable r1 = new TagStatus(appender,page,1);
-  	new Thread(r1).start();
-  	
-  	Runnable r2 = new TagStatus(appender,page,2);
-  	new Thread(r2).start();
-  	
-  	Runnable r3 = new TagStatus(appender,page,3);
-  	new Thread(r3).start();
-  	
-  	Runnable r4 = new TagStatus(appender,page,4);
-  	new Thread(r4).start();
+//  	Runnable r1 = new TagStatus(appender,page,1);
+//  	new Thread(r1).start();
+//  	
+//  	Runnable r2 = new TagStatus(appender,page,2);
+//  	new Thread(r2).start();
+//  	
+//  	Runnable r3 = new TagStatus(appender,page,3);
+//  	new Thread(r3).start();
+//  	
+//  	Runnable r4 = new TagStatus(appender,page,4);
+//  	new Thread(r4).start();
   	
  }
  
