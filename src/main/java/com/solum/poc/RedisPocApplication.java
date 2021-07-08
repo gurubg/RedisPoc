@@ -99,7 +99,7 @@ public class RedisPocApplication {
 
   	   public void run() {
   		   
-  		   JedisShardInfo shardInfo = new JedisShardInfo("guru.redis.cache.windows.net", 6379, true);
+  		   JedisShardInfo shardInfo = new JedisShardInfo("guru.redis.cache.windows.net", 6379, false);
   		    shardInfo.setPassword("zVgF5L0OJikHnUJVChwlvXzmES5UxG67h9RyiMwUkV4="); /* Use your access key. */
   		    Jedis jedis = new Jedis(shardInfo);
   		   // jedis.set("foo", "bar");
