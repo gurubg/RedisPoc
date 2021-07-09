@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.Pipeline;
 
@@ -105,6 +106,7 @@ public class RedisPocApplication {
   		   // jedis.set("foo", "bar");
   		    
           	log.info("Starting thread-" +appender + "-" );
+          	JedisPool jedisPool = new JedisPool(shardInfo.getHost());
 //          	JedisPool jedisPool = new JedisPool("127.0.0.1", 6379);
 //          	
 //          	JedisPool jedisPool1 = new JedisPool(uri)
@@ -139,18 +141,18 @@ public class RedisPocApplication {
       	        	{
       	        		//Insert SUCCESS in DB 
       	        		//Delete the hash from Redis
-      	        		//pipeline.del(key);
-      	        		successKeys.add(key);
+      	        		pipeline.del(key);
+      	        		//successKeys.add(key);
       	        		iNumSuccess++;
       	        	}
       	        	
       	        	if(iNumSuccess % 1000 == 0)
       	        	{
-      	        	   successKeys.forEach(s -> pipeline.del(s) );
+      	        	 //  successKeys.forEach(s -> pipeline.del(s) );
       	        	  // successKeys.forEach(s ->System.out.println(s) );
-      	                pipeline.sync();
-      	                successKeys.clear();
-      	          //    System.out.println(successKeys.size());
+      	              //  pipeline.sync();
+      	               // successKeys.clear();
+      	              System.out.println("Deleted-" + iNumSuccess);
       	        	}
               }
             
