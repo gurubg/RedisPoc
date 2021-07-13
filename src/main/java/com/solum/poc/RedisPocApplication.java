@@ -126,7 +126,7 @@ public class RedisPocApplication {
 
               	String key = appender.concat(padded );
 
-              	jedis.hset(key, page + "", "ACK");
+              	pipeline.hset(key, page + "", "ACK");
               	
               	
 //              	Map<String, String> map =  jedis.hgetAll(key);
@@ -145,15 +145,20 @@ public class RedisPocApplication {
 //      	        		//successKeys.add(key);
 //      	        		iNumSuccess++;
 //      	        	}
-      	        	
-      	        	if(iNumSuccess>0 && iNumSuccess % 1000 == 0)
-      	        	{
-      	        	 //  successKeys.forEach(s -> pipeline.del(s) );
-      	        	  // successKeys.forEach(s ->System.out.println(s) );
-      	         //      pipeline.sync();
-      	               // successKeys.clear();
-      	              System.out.println("Deleted-" + iNumSuccess);
-      	        	}
+              	iNumSuccess++;
+              	if(iNumSuccess % 1000 == 0)
+              	{
+              		pipeline.sync();
+              	}
+//      	        	if(iNumSuccess>0 && iNumSuccess % 1000 == 0)
+//      	        	{
+//      	        	 //  successKeys.forEach(s -> pipeline.del(s) );
+//      	        	  // successKeys.forEach(s ->System.out.println(s) );
+//      	         //      pipeline.sync();
+//      	               // successKeys.clear();
+//      	              System.out.println("Deleted-" + iNumSuccess);
+//      	        	}
+              	
               }
         	    log.info("Page -" + page + "- done");
 
