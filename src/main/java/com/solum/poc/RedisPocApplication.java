@@ -129,33 +129,34 @@ public class RedisPocApplication {
               	jedis.hset(key, page + "", "ACK");
               	
               	
-              	Map<String, String> map =  jedis.hgetAll(key);
-              	
-                 	boolean bSuccess = true;
+//              	Map<String, String> map =  jedis.hgetAll(key);
+//              	
+//                 	boolean bSuccess = true;
+//      	        	
+//      		        if(map.values().contains("PRO"))
+//      		        {
+//      		        	bSuccess = false;
+//      		        }
+//      	        	if (bSuccess)
+//      	        	{
+//      	        		//Insert SUCCESS in DB 
+//      	        		//Delete the hash from Redis
+//      	        		pipeline.del(key);
+//      	        		//successKeys.add(key);
+//      	        		iNumSuccess++;
+//      	        	}
       	        	
-      		        if(map.values().contains("PRO"))
-      		        {
-      		        	bSuccess = false;
-      		        }
-      	        	if (bSuccess)
-      	        	{
-      	        		//Insert SUCCESS in DB 
-      	        		//Delete the hash from Redis
-      	        		pipeline.del(key);
-      	        		//successKeys.add(key);
-      	        		iNumSuccess++;
-      	        	}
-      	        	
-      	        	if(iNumSuccess % 1000 == 0)
+      	        	if(iNumSuccess>0 && iNumSuccess % 1000 == 0)
       	        	{
       	        	 //  successKeys.forEach(s -> pipeline.del(s) );
       	        	  // successKeys.forEach(s ->System.out.println(s) );
-      	              //  pipeline.sync();
+      	         //      pipeline.sync();
       	               // successKeys.clear();
       	              System.out.println("Deleted-" + iNumSuccess);
       	        	}
               }
-            
+        	    log.info("Page -" + page + "- done");
+
               }
           	
               jedis.close();
